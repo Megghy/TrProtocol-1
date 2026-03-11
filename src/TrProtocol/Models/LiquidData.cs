@@ -8,7 +8,7 @@ public partial struct LiquidData
     [ArraySize(nameof(TotalChanges))]
     public LiquidChange[] LiquidChanges;
     
-    public override string ToString()
+    public override readonly string ToString()
     {
         return $"Total: {TotalChanges} tiles";
     }

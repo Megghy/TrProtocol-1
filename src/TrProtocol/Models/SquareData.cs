@@ -13,7 +13,7 @@ public partial struct SquareData : IAutoSerializable
     [ArraySize(nameof(Width), nameof(Height))]
     public SimpleTileData[,] Tiles;
     
-    public override string ToString()
+    public override readonly string ToString()
     {
         if (Width == 1 && Height == 1)
         {

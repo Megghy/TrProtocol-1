@@ -5,7 +5,7 @@ public partial struct Buff
     public ushort BuffType;
     public short BuffTime;
     
-    public override string ToString()
+    public override readonly string ToString()
     {
         var seconds = BuffTime / 60f;
     

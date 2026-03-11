@@ -53,7 +53,7 @@ public struct Color : IEquatable<Color>, IEquatable<RGBColor>, ISerializableView
     public override readonly int GetHashCode() => packedValue.GetHashCode();
     public override readonly bool Equals(object? obj) => obj is Color other && Equals(other);
     public readonly bool Equals(Color other) => packedValue.Equals(other.packedValue);
-    public bool Equals(RGBColor other) => R == other.R && G == other.G && B == other.B;
+    public readonly bool Equals(RGBColor other) => R == other.R && G == other.G && B == other.B;
     public static bool operator ==(Color a, Color b) => a.Equals(b);
     public static bool operator !=(Color a, Color b) => !a.Equals(b);
 }

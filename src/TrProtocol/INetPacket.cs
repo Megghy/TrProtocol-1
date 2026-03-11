@@ -31,25 +31,26 @@ public partial interface INetPacket : IAutoSerializable
         var properties = type.GetProperties(flags)
             .Where(p => p.CanRead && p.GetIndexParameters().Length == 0);
         
-        var members = fields.Select(f => new { f.Name, Value = f.GetValue(this) })
-            .Concat(properties.Select(p => new { p.Name, Value = p.GetValue(this) }));
+        IEnumerable<(string name, object value)> members = fields
+            .Select<FieldInfo, (string, object)>(f => new(f.Name, f.GetValue(this)!))
+            .Concat(properties.Select<PropertyInfo, (string, object)>(p => new(p.Name, p.GetValue(this)!)));
 
         foreach (var member in members)
         {
-            if (member.Name == "Type") continue;
-            if (member.Name == "ModuleType") continue; 
+            if (member.name == "Type") continue;
+            if (member.name == "ModuleType") continue; 
             
-            var formattedValue = member.Value switch
+            var formattedValue = member.value switch
             {
                 null => "null",
                 byte[] bytes => $"byte[{bytes.Length}] {{ {BitConverter.ToString(bytes).Replace("-", " ")} }}",
                 Array arr => $"{arr.GetType().GetElementType()?.Name}[{arr.Length}] {{ {string.Join(", ", arr.Cast<object>().Select(o => o?.ToString() ?? "null"))} }}", 
                 string s => $"\"{s}\"",
                 bool b => b.ToString().ToLower(),
-                _ => member.Value.ToString()
+                _ => member.value.ToString()
             } ?? string.Empty;
 
-            sb.AppendLine($"{subIndent}{member.Name} = {formattedValue}");
+            sb.AppendLine($"{subIndent}{member.name} = {formattedValue}");
         }
 
         sb.Append($"{indent}}}");

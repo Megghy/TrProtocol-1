@@ -13,7 +13,7 @@ public partial struct ItemData : IEquatable<ItemData>, IPackedSerializable
 
     public readonly bool Equals(ItemData other) =>
         ItemID == other.ItemID && Prefix == other.Prefix && Stack == other.Stack;
-    public override bool Equals([NotNullWhen(true)] object? obj) => obj is ItemData data && Equals(data);
+    public override readonly bool Equals([NotNullWhen(true)] object? obj) => obj is ItemData data && Equals(data);
 
     public override readonly int GetHashCode() => HashCode.Combine(ItemID, Prefix, Stack);
 

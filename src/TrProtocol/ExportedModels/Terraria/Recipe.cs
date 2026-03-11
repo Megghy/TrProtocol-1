@@ -10,7 +10,7 @@ namespace Terraria
             [Int7BitEncoded]
             public int stack;
             
-            public override string ToString()
+            public override readonly string ToString()
             {
                 return $"{{ItemIdOrRecipeGroup: {itemIdOrRecipeGroup}, Stack: {stack}}}";
             }

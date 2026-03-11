@@ -18,7 +18,7 @@ public struct ComplexTileFlags1 : IPackedSerializable
         set { if (value) InnerData |= 4; else InnerData = (byte)(InnerData & ~4); }
     }
     public LiquidMode Liquid {
-        get => (LiquidMode)((InnerData & 0b00011000) >> 3);
+        readonly get => (LiquidMode)((InnerData & 0b00011000) >> 3);
         set {
             var val = (byte)((byte)value << 3);
             val &= 0b00011000;
@@ -27,7 +27,7 @@ public struct ComplexTileFlags1 : IPackedSerializable
         }
     }
     public bool HasWaterOrShimmer {
-        get {
+        readonly get {
             return (InnerData & 0b00011000) == 0b00001000;
         }
         set {
@@ -38,7 +38,7 @@ public struct ComplexTileFlags1 : IPackedSerializable
         }
     }
     public bool HasLava {
-        get {
+        readonly get {
             return (InnerData & 0b00011000) == 0b00010000;
         }
         set {
@@ -49,7 +49,7 @@ public struct ComplexTileFlags1 : IPackedSerializable
         }
     }
     public bool HasHoney {
-        get {
+        readonly get {
             return (InnerData & 0b00011000) == 0b00011000;
         }
         set {
@@ -109,7 +109,7 @@ public struct ComplexTileFlags2 : IPackedSerializable
         set { if (value) InnerData |= 4; else InnerData = (byte)(InnerData & ~4); }
     }
     public TileSolpeMode TileSolpeMode {
-        get => (TileSolpeMode)((InnerData & 0b01110000) >> 4);
+        readonly get => (TileSolpeMode)((InnerData & 0b01110000) >> 4);
         set {
             var val = (byte)((byte)value << 4);
             val &= 0b01110000;

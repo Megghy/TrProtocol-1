@@ -14,7 +14,7 @@ public struct ParticleOrchestraSettings
     public const int SerializationSize = 21;
 
     [Obsolete]
-    public void Serialize(BinaryWriter writer) {
+    public readonly void Serialize(BinaryWriter writer) {
         writer.Write(PositionInWorld.X);
         writer.Write(PositionInWorld.Y);
         writer.Write(MovementVector.X);
@@ -31,7 +31,7 @@ public struct ParticleOrchestraSettings
         IndexOfPlayerWhoInvokedThis = reader.ReadByte();
     }
     
-    public override string ToString()
+    public override readonly string ToString()
     {
         return $"{{ Pos: {PositionInWorld.X:F1}, {PositionInWorld.Y:F1} | " +
                $"Vel: {MovementVector.X:F2}, {MovementVector.Y:F2} | " +

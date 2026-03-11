@@ -13,7 +13,7 @@ public partial struct NetTextModule : INetModulesPacket, ISideSpecific
     public TextC2S? TextC2S;
     [S2COnly]
     public TextS2C? TextS2C;
-    public override string ToString() {
+    public override readonly string ToString() {
         if (TextC2S is not null) {
             return $"[S2C] {TextS2C}";
         }

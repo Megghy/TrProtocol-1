@@ -10,7 +10,7 @@ public partial struct BitsByte : IPackedSerializable
     public byte value;
 
     public bool this[int key] {
-        get {
+        readonly get {
             return (value & (1 << key)) != 0;
         }
         set {
@@ -131,7 +131,7 @@ public partial struct BitsByte : IPackedSerializable
         return list.ToArray();
     }
     
-    public override string ToString()
+    public override readonly string ToString()
     {
         var bitsByte = this;
         return $"0x{(byte)this:X2} [{string.Concat(Enumerable.Range(0, 8).Select(i => bitsByte[7 - i] ? "1" : "0"))}]";

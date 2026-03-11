@@ -26,7 +26,7 @@ public partial struct WorldData : INetPacket
 
     [IgnoreSerialize]
     public Guid WorldUniqueID {
-        get => new Guid(WorldUniqueIDData);
+        readonly get => new Guid(WorldUniqueIDData);
         set => WorldUniqueIDData = value.ToByteArray();
     }
     [InitDefaultValue] public ulong WorldGeneratorVersion;

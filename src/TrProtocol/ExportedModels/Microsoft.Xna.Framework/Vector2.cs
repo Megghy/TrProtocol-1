@@ -456,11 +456,11 @@ public struct Vector2 : IPackedSerializable
         return left.X * right.Y - left.Y * right.X;
     }
 
-    public float Cross(Vector2 value) {
+    public readonly float Cross(Vector2 value) {
         return X * value.Y - Y * value.X;
     }
 
-    public Vector2 Symmetry(Vector2 Center) {
+    public readonly Vector2 Symmetry(Vector2 Center) {
         Center.X *= 2f;
         Center.X -= X;
         Center.Y *= 2f;
@@ -468,19 +468,19 @@ public struct Vector2 : IPackedSerializable
         return Center;
     }
 
-    public Vector2 ToLenOf(float len) {
+    public readonly Vector2 ToLenOf(float len) {
         Vector2 result = this;
         result.PolarRadius = len;
         return result;
     }
 
-    public Vector2 ToAngleOf(double angle) {
+    public readonly Vector2 ToAngleOf(double angle) {
         Vector2 result = this;
         result.Angle = angle;
         return result;
     }
 
-    public Vector2 ToVertical(float len) {
+    public readonly Vector2 ToVertical(float len) {
         return FromPolar(Angle + Math.PI / 2.0, len);
     }
 
@@ -491,17 +491,17 @@ public struct Vector2 : IPackedSerializable
         return result;
     }
 
-    public Vector2 Vertical() {
+    public readonly Vector2 Vertical() {
         return new Vector2(0f - Y, X);
     }
 
-    public Vector2 Deflect(double rad) {
+    public readonly Vector2 Deflect(double rad) {
         Vector2 result = this;
         result.Angle += rad;
         return result;
     }
 
-    public Point ToTileCoordinate() {
+    public readonly Point ToTileCoordinate() {
         int x = (int)Math.Ceiling(X / 16f);
         int y = (int)Math.Ceiling(Y / 16f);
         return new Point(x, y);

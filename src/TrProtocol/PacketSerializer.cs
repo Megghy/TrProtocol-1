@@ -1,9 +1,11 @@
-﻿namespace TrProtocol;
+﻿using System.Buffers;
+using Terraria;
 
-public class PacketSerializer(bool client, string version = "Terraria318")
+namespace TrProtocol;
+
+public class PacketSerializer(bool client)
 {
     public bool Client { get; } = client;
-    public string Version { get; } = version;
     
     public byte[] Serialize(INetPacket p)
     {
@@ -11,8 +13,8 @@ public class PacketSerializer(bool client, string version = "Terraria318")
         using var bw = new BinaryWriter(ms);
         
         bw.Write((ushort)0);
-       
-        var tempBuffer = new byte[65535];
+
+        var tempBuffer = ArrayPool<byte>.Shared.Rent(ushort.MaxValue);
         int contentLen;
 
         unsafe
@@ -29,7 +31,9 @@ public class PacketSerializer(bool client, string version = "Terraria318")
         bw.Write((ushort)(contentLen + 2));
         bw.Write(tempBuffer, 0, contentLen);
 
-        return ms.ToArray();
+        var data = ms.ToArray();
+        ArrayPool<byte>.Shared.Return(data);
+        return data;
     }
 
     public INetPacket Deserialize(BinaryReader br0)
