@@ -1,4 +1,4 @@
-﻿using System.Buffers;
+using System.Buffers;
 using Terraria;
 
 namespace TrProtocol;
@@ -15,25 +15,30 @@ public class PacketSerializer(bool client)
         bw.Write((ushort)0);
 
         var tempBuffer = ArrayPool<byte>.Shared.Rent(ushort.MaxValue);
-        int contentLen;
-
-        unsafe
+        try
         {
-            fixed (byte* pTemp = tempBuffer)
-            {
-                void* ptr = pTemp;
-                p.WriteContent(ref ptr);
-                contentLen = (int)((byte*)ptr - pTemp);
-            }
-        }
-        
-        bw.BaseStream.Position = 0;
-        bw.Write((ushort)(contentLen + 2));
-        bw.Write(tempBuffer, 0, contentLen);
+            int contentLen;
 
-        var data = ms.ToArray();
-        ArrayPool<byte>.Shared.Return(data);
-        return data;
+            unsafe
+            {
+                fixed (byte* pTemp = tempBuffer)
+                {
+                    void* ptr = pTemp;
+                    p.WriteContent(ref ptr);
+                    contentLen = (int)((byte*)ptr - pTemp);
+                }
+            }
+
+            bw.BaseStream.Position = 0;
+            bw.Write((ushort)(contentLen + 2));
+            bw.Write(tempBuffer, 0, contentLen);
+
+            return ms.ToArray();
+        }
+        finally
+        {
+            ArrayPool<byte>.Shared.Return(tempBuffer, clearArray: true);
+        }
     }
 
     public INetPacket Deserialize(BinaryReader br0)
