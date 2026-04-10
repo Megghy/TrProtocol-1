@@ -3,22 +3,40 @@ using System.Buffers.Binary;
 
 namespace TrProtocol;
 
-public readonly struct PacketCodecRental : IDisposable
-{
-    private readonly byte[]? _buffer;
 
-    internal PacketCodecRental(byte[] buffer, int length)
+public enum RentalOwnership
+{
+    Exclusive,
+    Shared
+}
+
+public sealed class PacketCodecRental : IDisposable
+{
+    private readonly RentalOwnership _ownership;
+    private byte[]? _buffer;
+
+    internal PacketCodecRental(byte[] buffer, int length, RentalOwnership ownership) 
     {
+        _ownership = ownership;
         _buffer = buffer;
         Memory = buffer.AsMemory(0, length);
     }
 
-    public ReadOnlyMemory<byte> Memory { get; }
+    public ReadOnlyMemory<byte> Memory { get; private set; }
 
-    public void Dispose()
+    public void Dispose() 
     {
-        if (_buffer is not null)
-            ArrayPool<byte>.Shared.Return(_buffer, clearArray: false);
+        if (_ownership is RentalOwnership.Shared && Interlocked.Exchange(ref _buffer, null) is { } sharedBuffer) 
+        {
+            ArrayPool<byte>.Shared.Return(sharedBuffer, clearArray: false);
+            Memory = ReadOnlyMemory<byte>.Empty;
+        }
+        else if (_buffer is { } localBuffer) 
+        {
+            _buffer = null;
+            ArrayPool<byte>.Shared.Return(localBuffer, clearArray: false);
+            Memory = ReadOnlyMemory<byte>.Empty;
+        }
     }
 }
 
@@ -90,11 +108,11 @@ public static class PacketCodec
         }
     }
 
-    public static PacketCodecRental SerializeRented(INetPacket packet)
+    public static PacketCodecRental SerializeRented(INetPacket packet, RentalOwnership ownership = RentalOwnership.Exclusive)
     {
         var buffer = ArrayPool<byte>.Shared.Rent(MaxPacketSize);
         var totalLength = Serialize(packet, buffer);
-        return new PacketCodecRental(buffer, totalLength);
+        return new PacketCodecRental(buffer, totalLength, ownership);
     }
 
     public static INetPacket Deserialize(ReadOnlySpan<byte> packetData, bool client)
